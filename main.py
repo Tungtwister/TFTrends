@@ -1,8 +1,8 @@
 import requests
 import pandas as pd
+import config
 
-api_key = ""
-
+api_key = config.api_key
 #Function to get player puuid, given a summoner name and region
 def get_puuid(summoner_name, region, api_key):
     api_url = (
@@ -71,4 +71,5 @@ def gather_all_data(puuid, match_ids, mass_region, api_key):
  
 puuid = get_puuid("Leáf", "na1", api_key)
 match_ids = get_match_ids(puuid, "AMERICAS", api_key)
-print(get_match_data(match_ids[0], "AMERICAS", api_key))
+print(match_ids)
+get_match_data(match_ids[0], "AMERICAS", api_key)
