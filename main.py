@@ -99,3 +99,32 @@ puuid = account.get("puuid")
 df = build_dataset(puuid, start=0, count=20)
 df.to_csv("tft_dataset.csv", index=False)
 print(df)
+
+#General Stats
+games_played = len(df)
+avg_placement = df["placement"].mean()
+avg_level = df["level"].mean()
+avg_gold_left = df["gold_left"].mean()
+avg_time_eliminated = df["time_eliminated"].mean()
+avg_last_round = df["last_round"].mean()
+avg_total_damage_to_players = df["total_damage_to_players"].mean()
+
+print(f"Games Played: {games_played}")
+print(f"Avg Placement: {avg_placement}")
+print(f"Avg Level: {avg_level}")
+print(f"Avg Gold Left: {avg_gold_left}")
+print(f"Avg Time Eliminated: {avg_time_eliminated}")
+print(f"Avg Last Round: {avg_last_round}")
+print(f"Avg Total Damage to Players: {avg_total_damage_to_players}")
+
+df["top4"] = df["placement"] <= 4
+top4_rate = df["top4"].mean() * 100
+win_rate = df["placement"].eq(1).mean() * 100
+avg_star_level = df.filter(regex=r"unit_\d+_tier").mean().mean()
+
+print(f"Top 4 Rate: {top4_rate:.2f}%")
+print(f"Win Rate: {win_rate:.2f}%")
+print(f"Avg Star Level: {avg_star_level:.2f}")
+
+avg_team_cost = df.filter(regex=r"unit_\d+_tier").applymap(lambda x: 1 if x > 0 else 0).sum(axis=1).mean()
+print(f"Avg Team Cost: {avg_team_cost:.2f}")
