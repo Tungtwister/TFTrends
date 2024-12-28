@@ -1,3 +1,4 @@
 #files git will ignore
 config.py
 tft_dataset.csv
+assets/
