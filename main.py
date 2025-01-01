@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 import config
+import champMap
 
 API_KEY = config.api_key
 #Function to get player puuid, given a summoner name and region
@@ -126,5 +127,24 @@ print(f"Top 4 Rate: {top4_rate:.2f}%")
 print(f"Win Rate: {win_rate:.2f}%")
 print(f"Avg Star Level: {avg_star_level:.2f}")
 
-avg_team_cost = df.filter(regex=r"unit_\d+_tier").applymap(lambda x: 1 if x > 0 else 0).sum(axis=1).mean()
+
+# Load the champion cost data
+champ_cost_df = champMap.champCost()
+
+# Calculate the total cost of a team for each match
+def calculate_team_cost(row, champ_cost_df):
+    total_cost = 0
+    for i in range(1, row["level"] + 1):  # Iterate from 1 to the player's level at the end of the game
+        unit_name = row.get(f"unit_{i}_name")
+        unit_tier = row.get(f"unit_{i}_tier")
+        if unit_name:
+            unit_name = unit_name.lower()
+            unit_cost = champ_cost_df.get(unit_name, 0)
+            total_cost += unit_cost * (3 ** (unit_tier - 1))
+    return total_cost
+
+# Apply the function to each row in the DataFrame
+df["team_cost"] = df.apply(calculate_team_cost, champ_cost_df=champ_cost_df, axis=1)
+# Calculate average team cost
+avg_team_cost = df["team_cost"].mean()
 print(f"Avg Team Cost: {avg_team_cost:.2f}")

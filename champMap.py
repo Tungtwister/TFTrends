@@ -8,7 +8,7 @@ def champCost():
 
     champion_mapping = {
         value["id"]: {
-            "name": value["name"],
+            "name": value["id"].lower(),
             "cost": value["tier"]
         }
         for key, value in data["data"].items()
@@ -16,8 +16,10 @@ def champCost():
 
     # Create a DataFrame
     df = pd.DataFrame(champion_mapping).T
-
     # Filter the DataFrame to get only tft13 champions
     tft13_champions = df[df.index.str.startswith('TFT13_')]
-    return tft13_champions
+
+    tft13_champions_dict = tft13_champions.set_index('name')['cost'].to_dict()
+    return tft13_champions_dict
+
 
